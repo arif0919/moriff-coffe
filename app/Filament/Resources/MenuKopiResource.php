@@ -17,7 +17,7 @@ class MenuKopiResource extends Resource
 {
     protected static ?string $model = MenuKopi::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-fire';
 
     public static function form(Form $form): Form
     {
@@ -29,12 +29,12 @@ class MenuKopiResource extends Resource
                 Forms\Components\TextInput::make('harga')
                     ->required()
                     ->numeric(),
-                Forms\Components\TextInput::make('jenis_id')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('barista_id')
-                    ->required()
-                    ->numeric(),
+                Forms\Components\Select::make('jenis_id')
+                    ->relationship('jenis', 'nama_jenis')
+                    ->required(),
+                Forms\Components\Select::make('barista_id')
+                    ->relationship('barista', 'nama_barista')
+                    ->required(),
             ]);
     }
 
@@ -45,12 +45,14 @@ class MenuKopiResource extends Resource
                 Tables\Columns\TextColumn::make('nama_menu')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('harga')
+                ->label('Harga')
+                ->formatStateUsing(function ($state) {
+                 return 'Rp ' . number_format($state * 1000, 0, ',', '.');
+                }),
+                Tables\Columns\TextColumn::make('jenis.nama_jenis')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('jenis_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('barista_id')
+                Tables\Columns\TextColumn::make('barista.nama_barista')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
